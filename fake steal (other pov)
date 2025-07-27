@@ -1,0 +1,111 @@
+-- โหลด Library และตั้งค่าหลัก
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+
+local Window = Fluent:CreateWindow({
+    Title = "Fluent " .. Fluent.Version,
+    SubTitle = "by oven",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
+    Acrylic = true,
+    Theme = "Dark",
+    MinimizeKey = Enum.KeyCode.LeftControl
+})
+
+local Tabs = {
+    Main = Window:AddTab({ Title = "Main", Icon = "" }),
+    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+}
+
+local Options = Fluent.Options
+
+-- ตัวแปรสำหรับควบคุมลูปเทเลพอร์ต
+local teleportLoopRunning = false
+
+-- ฟังก์ชันเทเลพอร์ต
+local function TeleportToPlayer(targetName)
+    local Players = game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+    local TargetPlayer = Players:FindFirstChild(targetName)
+
+    if TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        LocalPlayer.Character:MoveTo(TargetPlayer.Character.HumanoidRootPart.Position)
+        print("Teleported to player: "..targetName)
+    else
+        warn("Cannot teleport: Player '"..targetName.."' not found or character missing.")
+    end
+end
+
+-- ฟังก์ชันลูปเทเลพอร์ต
+local function TeleportLoop()
+    spawn(function()
+        while teleportLoopRunning do
+            local targetName = Options.TeleTarget.Value
+            if targetName ~= "" then
+                TeleportToPlayer(targetName)
+            else
+                warn("Teleport target is empty.")
+            end
+            wait(0.1) -- หน่วงเวลา 0.5 วิ ก่อนเทเลพอร์ตรอบถัดไป
+        end
+    end)
+end
+
+-- UI Controls
+do
+    Tabs.Main:AddInput("TeleTarget", {
+        Title = "Teleport Target",
+        Placeholder = "Enter player name...",
+        Default = "",
+        Callback = function(Value)
+            print("Teleport Target input:", Value)
+        end
+    })
+
+    Options.TeleTarget:OnChanged(function()
+        print("Teleport Target updated:", Options.TeleTarget.Value)
+    end)
+
+    Tabs.Main:AddToggle("StartTP", {
+        Title = "Start TP To Target",
+        Description = "start TP (loop teleport)",
+        Default = false,
+        Callback = function(Value)
+            print("Start Steal toggled:", Value)
+            teleportLoopRunning = Value
+            if teleportLoopRunning then
+                TeleportLoop()
+            else
+                print("Steal stopped.")
+            end
+        end
+    })
+
+    Options.StartSteal:OnChanged(function()
+        print("StartSteal value changed:", Options.StartSteal.Value)
+    end)
+end
+
+-- SaveManager & InterfaceManager Setup
+SaveManager:SetLibrary(Fluent)
+InterfaceManager:SetLibrary(Fluent)
+
+SaveManager:IgnoreThemeSettings()
+SaveManager:SetIgnoreIndexes({})
+
+InterfaceManager:SetFolder("FluentScriptHub")
+SaveManager:SetFolder("FluentScriptHub/specific-game")
+
+InterfaceManager:BuildInterfaceSection(Tabs.Settings)
+SaveManager:BuildConfigSection(Tabs.Settings)
+
+Window:SelectTab(1)
+
+Fluent:Notify({
+    Title = "Fluent",
+    Content = "The script has been loaded.",
+    Duration = 8
+})
+
+SaveManager:LoadAutoloadConfig()
