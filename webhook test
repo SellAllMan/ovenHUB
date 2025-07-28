@@ -16,7 +16,7 @@ local data = {
       image = {
         url = "https://i.gifer.com/fetch/w300-preview/33/33c752a975bf10bb8e6ddec4477d6892.gif"
       },
-      "thumbnail": {
+      thumbnail = {
         url = "https://i.gifer.com/cp.gif"
       }
     }
