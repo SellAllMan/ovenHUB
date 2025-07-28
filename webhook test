@@ -9,7 +9,6 @@ local data = {
         title = "**turn tp on**",
         description= "**turn on now**",
         color = 9893914,
-        fields = nil
         author = {
           icon_url = "https://cdn.discordapp.com/attachments/1291357905370484757/1399327966982439054/I_draw_in_anime_style_Check_out_my_Inst....jpg?ex=68889939&is=688747b9&hm=c5d127709203c59bab5dec97c8049afc223434e8a4a6436ecec44465a754faa7&"
         },
