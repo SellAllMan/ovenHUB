@@ -1,16 +1,62 @@
 local url = "https://discord.com/api/webhooks/1399326403454963782/ZYTG4B8W_uuwWFmHbAPXYLaxdTRVKhtekypG_dhrHfP5eU0P82OZTNUYRc2JZwHYercp"
 
+local gamename = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+local gameid = game.PlaceId
+local jobid = game.JobId
+local countPlr = #game.Players:GetPlayers()
+
+game.Players.PlayerAdded:Connect(function(players)
+
 local data = {
     username = "Fake Notify",
     avatar_url = "https://cdn.discordapp.com/attachments/1291357905370484757/1399327966982439054/I_draw_in_anime_style_Check_out_my_Inst....jpg?ex=68889939&is=688747b9&hm=c5d127709203c59bab5dec97c8049afc223434e8a4a6436ecec44465a754faa7&",
     content = nil,
     embeds = {
       {
-        title = "bro turn that MTFG on @everyone",
-        description= "turn it on now",
+        title = "**Check Players addad**",
+        description= "**Players : **"..countPlr,
         color = 121793,
+        fields = {
+          {
+            name = "**Game Name**",
+            value = ("```%s```"):format(gamename)
+          },
+          {
+            name = "**Game ID**",
+            value = ("```%d```"):format(gameid)
+          },
+          {
+            name = "**Job Id**",
+            value = ("```%s```"):format(jobid)
+          },
+          {
+            name = "**Players New Enter**",
+            value = ("```%s```"):format(players.name)
+          },
+          {
+            name = "**UserId**",
+            value = ("```%s```"):format(players.UserId)
+          },
+          {
+            name = "**Link Profile**",
+            value = ("```https://www.roblox.com/users/%d/profile```"):format(players.UserId)
+          }
+
+        },
+        author = {
+          name = gamename,
+          icon_url = "https://cdn.discordapp.com/attachments/1291357905370484757/1399327966982439054/I_draw_in_anime_style_Check_out_my_Inst....jpg?ex=68889939&is=688747b9&hm=c5d127709203c59bab5dec97c8049afc223434e8a4a6436ecec44465a754faa7&"
+        },
+        footer = {
+          text = "Powered by Oven",
+          icon_url = "https://cdn.discordapp.com/attachments/1291357905370484757/1399327966982439054/I_draw_in_anime_style_Check_out_my_Inst....jpg?ex=68889939&is=688747b9&hm=c5d127709203c59bab5dec97c8049afc223434e8a4a6436ecec44465a754faa7&"
+        },
+        timestamp = DateTime.now():ToIsoDate(),
+        image = {
+          url = "https://i.gifer.com/fetch/w300-preview/33/33c752a975bf10bb8e6ddec4477d6892.gif"
+        },
         thumbnail = {
-          url = "https://cdn.discordapp.com/attachments/1370471477006041139/1370481216716935430/32458542e73b4fed8db00115d5368589.jpg?ex=681fa798&is=681e5618&hm=ff8cc77e3bf886863ce0e99312a1d4e66213a025515f5666d0ad5056875f3dbe&"
+          url = "https://i.gifer.com/fetch/w300-preview/33/33c752a975bf10bb8e6ddec4477d6892.gif"
         }
       }
     },
@@ -20,8 +66,8 @@ local newdata = game:GetService("HttpService"):JSONEncode(data)
 
 local headers = {["content-type"] = "application/json"}
 request = http_request or request or HttpPost
-local oven = {Url = url, Body = newdata, Method = "POST", Headers = headers}
-request(oven)
+local https://cdn.discordapp.com/attachments/1291357905370484757/1399327966982439054/I_draw_in_anime_style_Check_out_my_Inst....jpg?ex=68889939&is=688747b9&hm=c5d127709203c59bab5dec97c8049afc223434e8a4a6436ecec44465a754faa7& = {Url = url, Body = newdata, Method = "POST", Headers = headers}
+request(https://cdn.discordapp.com/attachments/1291357905370484757/1399327966982439054/I_draw_in_anime_style_Check_out_my_Inst....jpg?ex=68889939&is=688747b9&hm=c5d127709203c59bab5dec97c8049afc223434e8a4a6436ecec44465a754faa7&)
 
 
 end)
