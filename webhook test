@@ -1,50 +1,16 @@
 local url = "https://discord.com/api/webhooks/1291304414229037108/WjsyjIPH-ttwTjfh9ePzIl8cdGzfZx8ufnqMWIxQ2gP-3CVQgmR-JE4m3bKIfz-1I2H0"
 
-local gamename = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
-local gameid = game.PlaceId
-local jobid = game.JobId
-local countPlr = #game.Players:GetPlayers()
-
-game.Players.PlayerAdded:Connect(function(players)
-
 local data = {
     username = "Fake Notify",
     avatar_url = "https://cdn.discordapp.com/attachments/1291357905370484757/1399327966982439054/I_draw_in_anime_style_Check_out_my_Inst....jpg?ex=68889939&is=688747b9&hm=c5d127709203c59bab5dec97c8049afc223434e8a4a6436ecec44465a754faa7&",
     content = nil,
     embeds = {
       {
-        title = "**Check Players addad**",
-        description= "**Players : **"..countPlr,
-        color = 121793,
-        fields = {
-          {
-            name = "**Game Name**",
-            value = ("```%s```"):format(gamename)
-          },
-          {
-            name = "**Game ID**",
-            value = ("```%d```"):format(gameid)
-          },
-          {
-            name = "**Job Id**",
-            value = ("```%s```"):format(jobid)
-          },
-          {
-            name = "**Players New Enter**",
-            value = ("```%s```"):format(players.name)
-          },
-          {
-            name = "**UserId**",
-            value = ("```%s```"):format(players.UserId)
-          },
-          {
-            name = "**Link Profile**",
-            value = ("```https://www.roblox.com/users/%d/profile```"):format(players.UserId)
-          }
-
-        },
+        title = "**turn tp on**",
+        description= "**turn on now**",
+        color = 9893914,
+        fields = nil
         author = {
-          name = gamename,
           icon_url = "https://cdn.discordapp.com/attachments/1291357905370484757/1399327966982439054/I_draw_in_anime_style_Check_out_my_Inst....jpg?ex=68889939&is=688747b9&hm=c5d127709203c59bab5dec97c8049afc223434e8a4a6436ecec44465a754faa7&"
         },
         footer = {
@@ -56,7 +22,7 @@ local data = {
           url = "https://i.gifer.com/fetch/w300-preview/33/33c752a975bf10bb8e6ddec4477d6892.gif"
         },
         thumbnail = {
-          url = "https://i.gifer.com/fetch/w300-preview/33/33c752a975bf10bb8e6ddec4477d6892.gif"
+          url = "https://i.gifer.com/fetch/w300-preview/6a/6aafe99617311e701baf720627980a98.gif"
         }
       }
     },
