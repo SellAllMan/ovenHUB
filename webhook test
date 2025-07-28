@@ -1,4 +1,4 @@
-local url = "https://discord.com/api/webhooks/1399326403454963782/ZYTG4B8W_uuwWFmHbAPXYLaxdTRVKhtekypG_dhrHfP5eU0P82OZTNUYRc2JZwHYercp"
+local url = "https://discord.com/api/webhooks/1291304414229037108/WjsyjIPH-ttwTjfh9ePzIl8cdGzfZx8ufnqMWIxQ2gP-3CVQgmR-JE4m3bKIfz-1I2H0"
 
 local gamename = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
 local gameid = game.PlaceId
