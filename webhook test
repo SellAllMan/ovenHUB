@@ -1,0 +1,35 @@
+local url = "https://discord.com/api/webhooks/1399326403454963782/ZYTG4B8W_uuwWFmHbAPXYLaxdTRVKhtekypG_dhrHfP5eU0P82OZTNUYRc2JZwHYercp"
+
+local data = {
+  username = "oven fake notify",
+  avatar_url = "https://cdn.discordapp.com/attachments/1291357905370484757/1399327966982439054/I_draw_in_anime_style_Check_out_my_Inst....jpg?ex=68889939&is=688747b9&hm=c5d127709203c59bab5dec97c8049afc223434e8a4a6436ecec44465a754faa7&",
+  content = "**brooowwww**",
+  embeds = {
+    {
+      title = "bro turn that MTFG on @everyone",
+      description = "turn it on now",
+      color = 9893914,
+      author = {
+        name = "hell nawh",
+        icon_url = "https://cdn.discordapp.com/attachments/1291357905370484757/1399327966982439054/I_draw_in_anime_style_Check_out_my_Inst....jpg?ex=68889939&is=688747b9&hm=c5d127709203c59bab5dec97c8049afc223434e8a4a6436ecec44465a754faa7&"
+      },
+      image = {
+        url = "https://i.gifer.com/fetch/w300-preview/33/33c752a975bf10bb8e6ddec4477d6892.gif"
+      },
+      "thumbnail": {
+        url = "https://i.gifer.com/cp.gif"
+      }
+    }
+   },
+}
+
+
+
+local newdata = game:GetService("HttpService"):JSONEncode(data)
+
+local headers = {["Content-type"] = "application/json"}
+request = http_request or request or HttpPost
+local oven = {Url = url, Body = newdata, Method = "POST", Headers = headers}
+request(oven)
+
+-- Datetime.now():ToIsoDate()
