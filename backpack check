@@ -1,0 +1,108 @@
+-- โหลด Fluent Library และ Addons
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+local backpack = player:WaitForChild("Backpack")
+
+-- สร้างหน้าต่างหลัก
+local Window = Fluent:CreateWindow({
+    Title = "Oven Hub " .. Fluent.Version,
+    SubTitle = "by ovenScriptor ",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
+    Acrylic = true,
+    Theme = "Dark",
+    MinimizeKey = Enum.KeyCode.LeftControl
+})
+
+local whitelist = {
+	"Kitsune",
+	"Dragonfly",
+    "T-rex"
+}
+
+-- สร้างแท็บ Main
+local Tabs = {
+    Main = Window:AddTab({ Title = "Main", Icon = "house" }),
+    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+}
+
+local Options = Fluent.Options
+
+do
+
+    Tabs.Main:AddButton({
+        Title = "check backpack",
+        Description = "",
+        Callback = function()
+local whitelistDict = {}
+for _, name in ipairs(whitelist) do
+	whitelistDict[name] = true
+end
+
+-- ฟังก์ชันตรวจสอบของที่อยู่ใน Backpack และอยู่ใน Whitelist
+local function checkWhitelistedItems()
+	local foundItems = {}
+
+	for _, item in pairs(backpack:GetChildren()) do
+		if whitelistDict[item.Name] then
+			table.insert(foundItems, item.Name)
+		end
+	end
+
+	return foundItems
+end
+
+local items = checkWhitelistedItems()
+
+    if #items > 0 then
+	    print("พบไอเทมใน whitelist:", table.concat(items, ", "))
+    else
+	    print("ไม่พบไอเทมที่อยู่ใน whitelist")
+    end
+})
+
+    -- ช่องใส่ข้อความ: "put name"
+    Tabs.Main:AddInput("PutNameInput", {
+        Title = "Put Username",
+        Placeholder = "Enter Username",
+        Default = "",
+        Numeric = false,
+        Finished = false,
+        Callback = function(Value)
+        end
+    })
+
+    local Toggle = Tabs.Main:AddToggle("Toggle", {
+        Title = "Start Steal",
+        Default = false
+    })
+
+    Toggle:OnChanged(function(Value)
+        if Value then
+            print("Stealing!!")
+        end
+    end)
+end
+
+-- ตั้งค่าระบบบันทึกและการตั้งค่า
+SaveManager:SetLibrary(Fluent)
+InterfaceManager:SetLibrary(Fluent)
+
+SaveManager:IgnoreThemeSettings()
+SaveManager:SetIgnoreIndexes({})
+InterfaceManager:SetFolder("FluentScriptHub")
+SaveManager:SetFolder("FluentScriptHub/specific-game")
+
+InterfaceManager:BuildInterfaceSection(Tabs.Settings)
+SaveManager:BuildConfigSection(Tabs.Settings)
+
+Window:SelectTab(1)
+
+Fluent:Notify({
+    Title = "oven hub",
+    Content = "Script Load Success!",
+    Duration = 8
+})
+
+SaveManager:LoadAutoloadConfig()
