@@ -1,7 +1,6 @@
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/Steal.lua"))()
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
-local backpack = player:WaitForChild("Backpack")
 
 local Window = Fluent:CreateWindow({
     Title = "Oven Hub " .. Fluent.Version,
@@ -41,9 +40,9 @@ do
     })
 
     MultiDropdown:SetValue({
-        three = true,
-        five = true,
-        seven = false
+        Dragonfly = true,
+        Raccoon = true,
+        Disco bee = false
     })
 
     MultiDropdown:OnChanged(function(Value)
