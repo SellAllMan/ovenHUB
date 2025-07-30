@@ -35,7 +35,7 @@ do
         local MultiDropdown = Tabs.Steal:AddDropdown("MultiDropdown", {
         Title = "Select Pet To Steal",
         Description = "You can select multiple pet",
-        Values = {"dragonfly", "Kitsune", "T-rex", "Queen bee", "Disco bee", "Fennec Fox", "Red Fox", "Raccoon", "Raiju", "Mimic Octopus", "Butterfly", "Corrupted Kitsune", ""},
+        Values = {"Dragonfly", "Kitsune", "T-rex", "Queen bee", "Disco bee", "Fennec Fox", "Red Fox", "Raccoon", "Raiju", "Mimic Octopus", "Butterfly", "Corrupted Kitsune", "Spinosaurus", "Rainbow Spinosaurus", "Rainbow Corrupted Kitsune"},
         Multi = true,
         Default = {},
     })
