@@ -1,13 +1,7 @@
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
-
--- โหลด Fluent UI และ Addons
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/Main.lua"))()
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
 
--- สร้างหน้าต่าง Fluent UI
 local Window = Fluent:CreateWindow({
     Title = "Oven Hub " .. Fluent.Version,
     SubTitle = "by ovenScriptor",
@@ -15,10 +9,9 @@ local Window = Fluent:CreateWindow({
     Size = UDim2.fromOffset(580, 460),
     Acrylic = true,
     Theme = "Dark",
-    MinimizeKey = Enum.KeyCode.LeftControl
+    MinimizeKey = nil -- ปิดปุ่มซ่อน UI อัตโนมัติ
 })
 
--- สร้าง Tab
 local Tabs = {
     Steal = Window:AddTab({ Title = "Steal", Icon = "house-plus" }),
     Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
@@ -33,13 +26,19 @@ do
         Default = "",
         Numeric = false,
         Finished = false,
-        Callback = function(Value) end
+        Callback = function(Value)
+        end
     })
 
     local MultiDropdown = Tabs.Steal:AddDropdown("MultiDropdown", {
         Title = "Select Pet To Steal",
         Description = "You can select multiple pet",
-        Values = {"Dragonfly", "Kitsune", "T-rex", "Queen bee", "Disco bee", "Fennec Fox", "Red Fox", "Raccoon", "Raiju", "Mimic Octopus", "Butterfly", "Corrupted Kitsune", "Spinosaurus", "Rainbow Spinosaurus", "Rainbow Corrupted Kitsune"},
+        Values = {
+            "Dragonfly", "Kitsune", "T-rex", "Queen bee", "Disco bee",
+            "Fennec Fox", "Red Fox", "Raccoon", "Raiju", "Mimic Octopus",
+            "Butterfly", "Corrupted Kitsune", "Spinosaurus", "Rainbow Spinosaurus",
+            "Rainbow Corrupted Kitsune"
+        },
         Multi = true,
         Default = {},
     })
@@ -52,10 +51,12 @@ do
 
     MultiDropdown:OnChanged(function(Value)
         local Values = {}
-        for k, v in pairs(Value) do
-            table.insert(Values, k)
+        for petName, state in next, Value do
+            if state then
+                table.insert(Values, petName)
+            end
         end
-        print("Mutlidropdown changed:", table.concat(Values, ", "))
+        print("Multidropdown changed:", table.concat(Values, ", "))
     end)
 
     local Toggle = Tabs.Steal:AddToggle("Toggle", {
@@ -91,28 +92,30 @@ Fluent:Notify({
 
 SaveManager:LoadAutoloadConfig()
 
--- สร้างปุ่ม GUI เพื่อ toggle แสดง/ซ่อน Fluent UI
+-- ตัวอย่างการสร้างปุ่ม GUI เพื่อเปิด/ปิด UI (ใส่ไว้ใน StarterGui)
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "FluentToggleGui"
+screenGui.Name = "ToggleUI"
 screenGui.Parent = playerGui
 
-local button = Instance.new("TextButton")
-button.Size = UDim2.new(0, 150, 0, 50)
-button.Position = UDim2.new(0, 20, 0, 20)
-button.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-button.TextColor3 = Color3.new(1, 1, 1)
-button.Text = "Toggle Fluent UI"
-button.Parent = screenGui
+local toggleButton = Instance.new("TextButton")
+toggleButton.Size = UDim2.new(0, 150, 0, 50)
+toggleButton.Position = UDim2.new(0, 10, 0, 10)
+toggleButton.Text = "Toggle UI"
+toggleButton.Parent = screenGui
 
 local uiVisible = true
 
-button.MouseButton1Click:Connect(function()
+toggleButton.MouseButton1Click:Connect(function()
     uiVisible = not uiVisible
     if uiVisible then
         Window:Show()
-        print("Fluent UI Shown")
+        print("UI Shown")
     else
         Window:Hide()
-        print("Fluent UI Hidden")
+        print("UI Hidden")
     end
 end)
