@@ -1,0 +1,88 @@
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/Steal.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+local backpack = player:WaitForChild("Backpack")
+
+local Window = Fluent:CreateWindow({
+    Title = "Oven Hub " .. Fluent.Version,
+    SubTitle = "by ovenScriptor ",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
+    Acrylic = true,
+    Theme = "Dark",
+    MinimizeKey = Enum.KeyCode.LeftControl
+})
+
+local Tabs = {
+    Steal = Window:AddTab({ Title = "Steal", Icon = "house-plus" }),
+    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+}
+
+local Options = Fluent.Options
+
+do
+
+    Tabs.Steal:AddInput("PutNameInput", {
+        Title = "Username",
+        Placeholder = "Enter Username",
+        Default = "",
+        Numeric = false,
+        Finished = false,
+        Callback = function(Value)
+        end
+    })
+
+        local MultiDropdown = Tabs.Steal:AddDropdown("MultiDropdown", {
+        Title = "Select Pet To Steal",
+        Description = "You can select multiple pet",
+        Values = {"dragonfly", "Kitsune", "T-rex", "Queen bee", "Disco bee", "Fennec Fox", "Red Fox", "Raccoon", "Raiju", "Mimic Octopus", "Butterfly", "Corrupted Kitsune", ""},
+        Multi = true,
+        Default = {},
+    })
+
+    MultiDropdown:SetValue({
+        three = true,
+        five = true,
+        seven = false
+    })
+
+    MultiDropdown:OnChanged(function(Value)
+        local Values = {}
+        for Value, State in next, Value do
+            table.insert(Values, Value)
+        end
+        print("Mutlidropdown changed:", table.concat(Values, ", "))
+    end)
+
+    local Toggle = Tabs.Steal:AddToggle("Toggle", {
+        Title = "Start Steal",
+        Default = false
+    })
+
+    Toggle:OnChanged(function(Value)
+        if Value then
+            print("Stealing!!")
+        end
+    end)
+end
+
+SaveManager:SetLibrary(Fluent)
+InterfaceManager:SetLibrary(Fluent)
+
+SaveManager:IgnoreThemeSettings()
+SaveManager:SetIgnoreIndexes({})
+InterfaceManager:SetFolder("FluentScriptHub")
+SaveManager:SetFolder("FluentScriptHub/specific-game")
+
+InterfaceManager:BuildInterfaceSection(Tabs.Settings)
+SaveManager:BuildConfigSection(Tabs.Settings)
+
+Window:SelectTab(1)
+
+Fluent:Notify({
+    Title = "oven hub",
+    Content = "Script Load Success!",
+    Duration = 8
+})
+
+SaveManager:LoadAutoloadConfig()
