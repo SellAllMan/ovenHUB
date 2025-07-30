@@ -2,7 +2,7 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- โหลด Fluent UI
+-- โหลด Fluent UI และ Addons
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/Main.lua"))()
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
@@ -10,14 +10,15 @@ local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.
 -- สร้างหน้าต่าง Fluent UI
 local Window = Fluent:CreateWindow({
     Title = "Oven Hub " .. Fluent.Version,
-    SubTitle = "by ovenScriptor ",
+    SubTitle = "by ovenScriptor",
     TabWidth = 160,
     Size = UDim2.fromOffset(580, 460),
     Acrylic = true,
     Theme = "Dark",
-    MinimizeKey = Enum.KeyCode.LeftControl -- เดิมไว้ก่อน
+    MinimizeKey = Enum.KeyCode.LeftControl
 })
 
+-- สร้าง Tab
 local Tabs = {
     Steal = Window:AddTab({ Title = "Steal", Icon = "house-plus" }),
     Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
@@ -51,8 +52,8 @@ do
 
     MultiDropdown:OnChanged(function(Value)
         local Values = {}
-        for Value, State in next, Value do
-            table.insert(Values, Value)
+        for k, v in pairs(Value) do
+            table.insert(Values, k)
         end
         print("Mutlidropdown changed:", table.concat(Values, ", "))
     end)
@@ -83,14 +84,14 @@ SaveManager:BuildConfigSection(Tabs.Settings)
 Window:SelectTab(1)
 
 Fluent:Notify({
-    Title = "oven hub",
+    Title = "Oven Hub",
     Content = "Script Load Success!",
     Duration = 8
 })
 
 SaveManager:LoadAutoloadConfig()
 
--- สร้างปุ่ม GUI ที่หน้าจอ
+-- สร้างปุ่ม GUI เพื่อ toggle แสดง/ซ่อน Fluent UI
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "FluentToggleGui"
 screenGui.Parent = playerGui
@@ -103,14 +104,15 @@ button.TextColor3 = Color3.new(1, 1, 1)
 button.Text = "Toggle Fluent UI"
 button.Parent = screenGui
 
-local visible = true
+local uiVisible = true
+
 button.MouseButton1Click:Connect(function()
-    visible = not visible
-    if visible then
-        Window:Show()   -- เปิด UI
+    uiVisible = not uiVisible
+    if uiVisible then
+        Window:Show()
         print("Fluent UI Shown")
     else
-        Window:Hide()   -- ซ่อน UI
+        Window:Hide()
         print("Fluent UI Hidden")
     end
 end)
