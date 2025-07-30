@@ -1,0 +1,200 @@
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/Main.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+
+Fluent:Notify({
+    Title = "script loading...",
+    Content = "load status 0/5",
+    Duration = 3
+})
+
+task.Wait(2)
+
+if setfpscap then
+    setfpscap(1)
+end
+
+local t0 = tick()
+while tick() - t0 < 1 do
+
+end
+
+if setfpscap then
+    setfpscap(60)
+end
+
+local Window = Fluent:CreateWindow({
+    Title = "Oven Hub ",
+    SubTitle = "by ovenScriptor ",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
+    Acrylic = true,
+    Theme = "Dark",
+    MinimizeKey = Enum.KeyCode.LeftControl
+})
+
+Fluent:Notify({
+    Title = "script loading...",
+    Content = "load status 1/5",
+    Duration = 5
+})
+
+task.Wait(2)
+
+if setfpscap then
+    setfpscap(1)
+end
+
+local t0 = tick()
+while tick() - t0 < 1 do
+
+end
+
+if setfpscap then
+    setfpscap(60)
+end
+
+local Tabs = {
+    Steal = Window:AddTab({ Title = "Steal", Icon = "" }),
+    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+}
+
+local Options = Fluent.Options
+
+do
+
+task.Wait(2)
+
+Fluent:Notify({
+    Title = "script loading...",
+    Content = "load status 2/5",
+    Duration = 5
+})
+
+
+if setfpscap then
+    setfpscap(1)
+end
+
+local t0 = tick()
+while tick() - t0 < 1 do
+
+end
+
+if setfpscap then
+    setfpscap(60)
+end
+
+Fluent:Notify({
+    Title = "script loading...",
+    Content = "load status 3/5",
+    Duration = 5
+})
+
+
+    Tabs.Steal:AddInput("PutNameInput", {
+        Title = "Username",
+        Placeholder = "Enter Username",
+        Default = "",
+        Numeric = false,
+        Finished = false,
+        Callback = function(Value)
+        end
+    })
+
+        local MultiDropdown = Tabs.Steal:AddDropdown("MultiDropdown", {
+        Title = "Select Pet To Steal",
+        Description = "You can select multiple pet",
+        task.Wait(1)
+        if setfpscap then
+        setfpscap(1)
+    end
+
+    local t0 = tick()
+    while tick() - t0 < 1 do
+
+    end
+
+    if setfpscap then
+        setfpscap(60)
+    end
+        Values = {"Dragonfly", "Kitsune", "T-rex", "Queen bee", "Disco bee", "Fennec Fox", "Red Fox", "Raccoon", "Raiju", "Mimic Octopus", "Butterfly", "Corrupted Kitsune", "Spinosaurus", "Rainbow Spinosaurus", "Rainbow Corrupted Kitsune"},
+        Multi = true,
+        Default = {},
+    })
+
+    local Toggle = Tabs.Steal:AddToggle("Toggle", {
+        Title = "Start Steal",
+        Default = false
+    })
+
+    Toggle:OnChanged(function(Value)
+        if Value then
+            print("Stealing!!")
+        end
+    end)
+end
+
+task.Wait(2)
+
+Fluent:Notify({
+    Title = "script loading...",
+    Content = "load status 4/5",
+    Duration = 5
+})
+
+
+if setfpscap then
+    setfpscap(1)
+end
+
+local t0 = tick()
+while tick() - t0 < 1 do
+
+end
+
+if setfpscap then
+    setfpscap(60)
+end
+
+Fluent:Notify({
+    Title = "load success!",
+    Content = "load status 5/5",
+    Duration = 8
+})
+
+
+SaveManager:SetLibrary(Fluent)
+InterfaceManager:SetLibrary(Fluent)
+
+SaveManager:IgnoreThemeSettings()
+SaveManager:SetIgnoreIndexes({})
+InterfaceManager:SetFolder("FluentScriptHub")
+SaveManager:SetFolder("FluentScriptHub/specific-game")
+
+InterfaceManager:BuildInterfaceSection(Tabs.Settings)
+SaveManager:BuildConfigSection(Tabs.Settings)
+
+Window:SelectTab(1)
+
+task.Wait(2)
+
+if setfpscap then
+    setfpscap(1)
+end
+
+local t0 = tick()
+while tick() - t0 < 2 do
+
+end
+
+if setfpscap then
+    setfpscap(60)
+
+Fluent:Notify({
+    Title = "oven hub",
+    Content = "Script Load Success!",
+    Duration = 8
+})
+
+SaveManager:LoadAutoloadConfig()
