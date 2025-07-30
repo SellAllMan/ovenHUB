@@ -1,9 +1,10 @@
-local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/Steal.lua"))()
+local Oven = loadstring(game.HttpGet('https://github.com/SellAllMan/ovenHUB/raw/refs/heads/main/ovenHUB'))()
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/Main.lua"))()
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
 
 local Window = Fluent:CreateWindow({
-    Title = "Oven Hub " .. Fluent.Version,
+    Title = "Oven Hub " .. Oven.Version,
     SubTitle = "by ovenScriptor ",
     TabWidth = 160,
     Size = UDim2.fromOffset(580, 460),
@@ -38,20 +39,6 @@ do
         Multi = true,
         Default = {},
     })
-
-    MultiDropdown:SetValue({
-        Dragonfly = true,
-        Raccoon = true,
-        Disco bee = false
-    })
-
-    MultiDropdown:OnChanged(function(Value)
-        local Values = {}
-        for Value, State in next, Value do
-            table.insert(Values, Value)
-        end
-        print("Mutlidropdown changed:", table.concat(Values, ", "))
-    end)
 
     local Toggle = Tabs.Steal:AddToggle("Toggle", {
         Title = "Start Steal",
