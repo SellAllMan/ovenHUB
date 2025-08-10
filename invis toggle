@@ -12,13 +12,22 @@ local Character, InvisibleCharacter
 local invisFix, invisDied
 
 local function fixCamera()
-    -- ตั้งกล้องกลับไปติดตาม HumanoidRootPart ตัวละครปัจจุบัน
     local cam = Workspace.CurrentCamera
-    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-    if hrp then
-        cam.CameraSubject = player.Character:FindFirstChildOfClass("Humanoid") or hrp
-        cam.CameraType = Enum.CameraType.Custom
+    local char = player.Character
+    if not char then return end
+
+    local humanoid = char:FindFirstChildOfClass("Humanoid")
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+
+    if humanoid then
+        cam.CameraSubject = humanoid
+    elseif hrp then
+        cam.CameraSubject = hrp
+    else
+        cam.CameraSubject = char
     end
+
+    cam.CameraType = Enum.CameraType.Custom
 end
 
 local function Respawn()
@@ -59,7 +68,6 @@ function TurnVisible()
         invisDied = nil
     end
 
-    local CF = Workspace.CurrentCamera.CFrame
     local CF_1 = player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character.HumanoidRootPart.CFrame or nil
     if CF_1 and Character and Character:FindFirstChild("HumanoidRootPart") then
         Character.HumanoidRootPart.CFrame = CF_1
@@ -140,14 +148,13 @@ function MakeInvisible()
     InvisibleCharacter.HumanoidRootPart.CFrame = CF_1
     player.Character = InvisibleCharacter
 
-    -- fix camera หลังสลับตัวละคร
     fixCamera()
 
     player.Character.Animate.Disabled = true
     player.Character.Animate.Disabled = false
 end
 
--- UI สร้างปุ่ม toggle ลากได้ใน client
+-- UI Toggle ปุ่มลากได้
 
 local PlayerGui = player:WaitForChild("PlayerGui")
 
