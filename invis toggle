@@ -2,6 +2,7 @@ local RunService = game:GetService("RunService")
 local Lighting = game:GetService("Lighting")
 local Workspace = game:GetService("Workspace")
 local Players = game:GetService("Players")
+local StarterGui = game:GetService("StarterGui")
 
 local player = Players.LocalPlayer
 
@@ -30,6 +31,15 @@ local function fixCamera()
     cam.CameraType = Enum.CameraType.Custom
 end
 
+local function refreshChat()
+    -- รีเฟรช Chat GUI เพื่อแก้ปัญหาการไม่แสดง/ส่งข้อความ
+    pcall(function()
+        StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, false)
+        wait(0.1)
+        StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, true)
+    end)
+end
+
 local function Respawn()
     IsRunning = false
     if IsInvis == true then
@@ -43,6 +53,7 @@ local function Respawn()
             if InvisibleCharacter then InvisibleCharacter.Parent = nil end
             invisRunning = false
             fixCamera()
+            refreshChat()
         end)
     elseif IsInvis == false then
         pcall(function()
@@ -53,6 +64,7 @@ local function Respawn()
             if hum then hum:Destroy() end
             TurnVisible()
             fixCamera()
+            refreshChat()
         end)
     end
 end
@@ -84,6 +96,7 @@ function TurnVisible()
     end
     invisRunning = false
     fixCamera()
+    refreshChat()
 end
 
 function MakeInvisible()
@@ -157,6 +170,8 @@ function MakeInvisible()
 
     player.Character.Animate.Disabled = true
     player.Character.Animate.Disabled = false
+    invisRunning = false
+    refreshChat()
 end
 
 -- UI Toggle ปุ่มลากได้
