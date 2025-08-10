@@ -1,63 +1,112 @@
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Lighting = game:GetService("Lighting")
-local workspace = game:GetService("Workspace")
+local Workspace = game:GetService("Workspace")
 local UserInputService = game:GetService("UserInputService")
+
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
 
 local invisRunning = false
 local IsInvis = false
-local Player = Players.LocalPlayer
 local Character = Player.Character or Player.CharacterAdded:Wait()
 local InvisibleCharacter
 local invisFix
 local invisDied
 
--- ฟังก์ชัน Respawn (ใช้ตอนตัวละครตายหรือต้องการรีเซ็ต)
+local toggleOn = false
+local toggleButton
+
+-- สร้าง GUI toggle draggable (แยกฟังก์ชัน)
+local function CreateToggleGui()
+    local oldGui = PlayerGui:FindFirstChild("ToggleInvisibleGui")
+    if oldGui then oldGui:Destroy() end
+
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "ToggleInvisibleGui"
+    screenGui.Parent = PlayerGui
+
+    local dragFrame = Instance.new("Frame")
+    dragFrame.Size = UDim2.new(0, 130, 0, 50)
+    dragFrame.Position = UDim2.new(0.5, -65, 0.8, 0)
+    dragFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    dragFrame.BackgroundTransparency = 0.3
+    dragFrame.BorderSizePixel = 0
+    dragFrame.Parent = screenGui
+    dragFrame.Active = true
+    dragFrame.Draggable = true
+
+    toggleButton = Instance.new("TextButton")
+    toggleButton.Size = UDim2.new(1, 0, 1, 0)
+    toggleButton.BackgroundColor3 = toggleOn and Color3.fromRGB(0, 200, 0) or Color3.fromRGB(200, 0, 0)
+    toggleButton.TextColor3 = Color3.new(1, 1, 1)
+    toggleButton.Text = toggleOn and "Toggle ON" or "Toggle OFF"
+    toggleButton.Parent = dragFrame
+    toggleButton.Font = Enum.Font.SourceSansBold
+    toggleButton.TextScaled = true
+
+    toggleButton.MouseButton1Click:Connect(function()
+        ToggleInvisible()
+        toggleOn = not toggleOn
+        toggleButton.Text = toggleOn and "Toggle ON" or "Toggle OFF"
+        toggleButton.BackgroundColor3 = toggleOn and Color3.fromRGB(0, 200, 0) or Color3.fromRGB(200, 0, 0)
+    end)
+end
+
+-- ฟังก์ชัน Respawn
 local function Respawn()
-    IsRunning = false
+    invisRunning = false
     if IsInvis == true then
         pcall(function()
             Player.Character = Character
             wait()
-            Character.Parent = workspace
-            Character:FindFirstChildWhichIsA('Humanoid'):Destroy()
+            Character.Parent = Workspace
+            local humanoid = Character:FindFirstChildWhichIsA('Humanoid')
+            if humanoid then humanoid:Destroy() end
             IsInvis = false
             if InvisibleCharacter then InvisibleCharacter.Parent = nil end
-            invisRunning = false
         end)
     elseif IsInvis == false then
         pcall(function()
             Player.Character = Character
             wait()
-            Character.Parent = workspace
-            Character:FindFirstChildWhichIsA('Humanoid'):Destroy()
+            Character.Parent = Workspace
+            local humanoid = Character:FindFirstChildWhichIsA('Humanoid')
+            if humanoid then humanoid:Destroy() end
             TurnVisible()
         end)
     end
 end
 
--- ฟังก์ชัน TurnVisible: ทำให้ตัวละครกลับมาเห็น
+-- ฟังก์ชัน TurnVisible
 function TurnVisible()
     if IsInvis == false then return end
     if invisFix then invisFix:Disconnect() end
     if invisDied then invisDied:Disconnect() end
-    local CF_1 = Player.Character.HumanoidRootPart.CFrame
-    Character.HumanoidRootPart.CFrame = CF_1
+
+    local cf = InvisibleCharacter and InvisibleCharacter:FindFirstChild("HumanoidRootPart") and InvisibleCharacter.HumanoidRootPart.CFrame or nil
+    if cf and Character and Character:FindFirstChild("HumanoidRootPart") then
+        Character.HumanoidRootPart.CFrame = cf
+    end
+
     if InvisibleCharacter then InvisibleCharacter:Destroy() end
     Player.Character = Character
-    Character.Parent = workspace
+    Character.Parent = Workspace
     IsInvis = false
+
     Player.Character.Animate.Disabled = true
     Player.Character.Animate.Disabled = false
+
     invisDied = Character:FindFirstChildOfClass('Humanoid').Died:Connect(function()
         Respawn()
         invisDied:Disconnect()
     end)
+
     invisRunning = false
     print("You are now visible")
 end
 
--- ฟังก์ชัน MakeInvisible: ทำให้ตัวละครล่องหน
+-- ฟังก์ชัน MakeInvisible
 function MakeInvisible()
     if invisRunning then return end
     invisRunning = true
@@ -68,11 +117,11 @@ function MakeInvisible()
 
     InvisibleCharacter = Character:Clone()
     InvisibleCharacter.Parent = Lighting
-    local Void = workspace.FallenPartsDestroyHeight
+    local Void = Workspace.FallenPartsDestroyHeight
     InvisibleCharacter.Name = ""
 
     -- ตั้งค่า transparency ให้ตัว clone
-    for i,v in pairs(InvisibleCharacter:GetDescendants()) do
+    for _, v in pairs(InvisibleCharacter:GetDescendants()) do
         if v:IsA("BasePart") then
             if v.Name == "HumanoidRootPart" then
                 v.Transparency = 1
@@ -85,18 +134,12 @@ function MakeInvisible()
     -- ฟังก์ชันเช็คการตายหรือตกนอกแผนที่
     invisFix = RunService.Stepped:Connect(function()
         pcall(function()
-            local IsInteger
-            if tostring(Void):find('-') then
-                IsInteger = true
+            local isNegative = tostring(Void):find('-') and true or false
+            local posY = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") and Player.Character.HumanoidRootPart.Position.Y or 0
+            if isNegative then
+                if posY <= Void then Respawn() end
             else
-                IsInteger = false
-            end
-            local Pos = Player.Character.HumanoidRootPart.Position
-            local Y = Pos.Y
-            if IsInteger then
-                if Y <= Void then Respawn() end
-            else
-                if Y >= Void then Respawn() end
+                if posY >= Void then Respawn() end
             end
         end)
     end)
@@ -107,87 +150,62 @@ function MakeInvisible()
     end)
 
     -- ย้ายตัวจริงไปที่ Lighting (ซ่อน)
-    local CF_1 = Player.Character.HumanoidRootPart.CFrame
+    local cf1 = Player.Character.HumanoidRootPart.CFrame
     Character:MoveTo(Vector3.new(0, math.pi * 1000000, 0))
-    workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
+    Workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
+    Workspace.CurrentCamera.CFrame = cf1 -- ตั้งกล้องตามตำแหน่งเดิมก่อนล่องหน
     wait(0.2)
-    workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+    Workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
     Character.Parent = Lighting
 
     -- นำ clone มาแทนที่ตัวละครใน workspace
-    InvisibleCharacter.Parent = workspace
-    InvisibleCharacter.HumanoidRootPart.CFrame = CF_1
+    InvisibleCharacter.Parent = Workspace
+    InvisibleCharacter.HumanoidRootPart.CFrame = cf1
     Player.Character = InvisibleCharacter
 
     Player.Character.Animate.Disabled = true
     Player.Character.Animate.Disabled = false
 
+    -- ปรับกล้องให้ติดตาม InvisibleCharacter ทุกเฟรม
+    RunService:BindToRenderStep("CameraFollow", Enum.RenderPriority.Camera.Value + 1, function()
+        if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+            Workspace.CurrentCamera.CFrame = Player.Character.HumanoidRootPart.CFrame * CFrame.new(0, 5, 10)
+        end
+    end)
+
     IsInvis = true
     print("You are now invisible")
 end
 
--- ฟังก์ชัน Toggle สลับสถานะ
+-- ฟังก์ชัน Toggle
 function ToggleInvisible()
     if invisRunning then
         TurnVisible()
+        RunService:UnbindFromRenderStep("CameraFollow") -- ยกเลิกติดตามกล้องตอน visible
     else
         MakeInvisible()
     end
 end
 
--- สร้าง GUI Toggle ปุ่มกด draggable สำหรับมือถือ/ทุกแพลตฟอร์ม
-local playerGui = Player:WaitForChild("PlayerGui")
+-- สร้าง GUI Toggle
+CreateToggleGui()
 
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "ToggleInvisibleGui"
-screenGui.Parent = playerGui
-
-local dragFrame = Instance.new("Frame")
-dragFrame.Size = UDim2.new(0, 130, 0, 50)
-dragFrame.Position = UDim2.new(0.5, -65, 0.8, 0)
-dragFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-dragFrame.BackgroundTransparency = 0.3
-dragFrame.BorderSizePixel = 0
-dragFrame.Parent = screenGui
-dragFrame.Active = true
-dragFrame.Draggable = true -- เปิดลากได้เลย
-
-local toggleButton = Instance.new("TextButton")
-toggleButton.Size = UDim2.new(1, 0, 1, 0)
-toggleButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
-toggleButton.TextColor3 = Color3.new(1, 1, 1)
-toggleButton.Text = "Toggle OFF"
-toggleButton.Parent = dragFrame
-toggleButton.Font = Enum.Font.SourceSansBold
-toggleButton.TextScaled = true
-
--- ตัวแปรสถานะ toggle GUI (แยกจาก invisRunning)
-local toggleOn = false
-
-toggleButton.MouseButton1Click:Connect(function()
-    ToggleInvisible()
-    toggleOn = not toggleOn
-    if toggleOn then
-        toggleButton.Text = "Toggle ON"
-        toggleButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
-    else
-        toggleButton.Text = "Toggle OFF"
-        toggleButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
-    end
+-- สร้าง GUI ใหม่ตอน respawn ตัวละคร (ไม่ให้ GUI หาย)
+Player.CharacterAdded:Connect(function()
+    wait(1)
+    Character = Player.Character
+    CreateToggleGui()
 end)
 
--- (ถ้าต้องการ) ผูกปุ่มคีย์บอร์ด T สำหรับทดสอบ toggle
+-- ผูกปุ่มคีย์บอร์ด T (ทดสอบ toggle ได้บน PC)
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
     if gameProcessed then return end
     if input.KeyCode == Enum.KeyCode.T then
         ToggleInvisible()
         toggleOn = not toggleOn
-        if toggleOn then
-            toggleButton.Text = "Toggle ON"
-            toggleButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
-        else
-            toggleButton.Text = "Toggle OFF"
-            toggleButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+        if toggleButton then
+            toggleButton.Text = toggleOn and "Toggle ON" or "Toggle OFF"
+            toggleButton.BackgroundColor3 = toggleOn and Color3.fromRGB(0, 200, 0) or Color3.fromRGB(200, 0, 0)
         end
     end
 end)
