@@ -13,9 +13,9 @@ local IsRunning = false
 local Character, InvisibleCharacter
 local invisFix, invisDied
 
-local function fixCamera()
+local function fixCamera(targetCharacter)
     local cam = Workspace.CurrentCamera
-    local char = player.Character
+    local char = targetCharacter or player.Character
     if not char then return end
 
     local humanoid = char:FindFirstChildOfClass("Humanoid")
@@ -36,7 +36,6 @@ local function Respawn()
     IsRunning = false
     if IsInvis == true then
         pcall(function()
-            -- ตัวจริงอยู่ไกลแล้ว ให้กลับมาปกติ
             if Character then
                 player.Character = Character
                 wait()
@@ -46,7 +45,7 @@ local function Respawn()
                 IsInvis = false
                 if InvisibleCharacter then InvisibleCharacter:Destroy() end
                 invisRunning = false
-                fixCamera()
+                fixCamera(Character)
             end
         end)
     elseif IsInvis == false then
@@ -58,7 +57,7 @@ local function Respawn()
                 local hum = Character:FindFirstChildWhichIsA("Humanoid")
                 if hum then hum:Destroy() end
                 TurnVisible()
-                fixCamera()
+                fixCamera(Character)
             end
         end)
     end
@@ -75,7 +74,6 @@ function TurnVisible()
         invisDied = nil
     end
 
-    -- Tween ตัวจริงกลับมาใกล้ตำแหน่ง clone ก่อนทำลาย clone
     if InvisibleCharacter and InvisibleCharacter:FindFirstChild("HumanoidRootPart") and Character and Character:FindFirstChild("HumanoidRootPart") then
         local targetCFrame = InvisibleCharacter.HumanoidRootPart.CFrame + Vector3.new(0, 2, 0)
         local hrp = Character.HumanoidRootPart
@@ -104,9 +102,8 @@ function TurnVisible()
         Character.Animate.Disabled = false
     end
     invisRunning = false
-    fixCamera()
+    fixCamera(Character)
 
-    -- รีเซ็ต Chat GUI เพื่อแก้ปัญหาแชทไม่โชว์หลังกลับ visible
     pcall(function()
         StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, false)
         wait(0.1)
@@ -137,7 +134,6 @@ function MakeInvisible()
         end
     end
 
-    -- ย้ายตัวจริงไปไกลๆ
     local invisPos = Character.HumanoidRootPart.CFrame
     local farAwayPos = invisPos + Vector3.new(0, 1e6 + 2, 0)
     Character:SetPrimaryPartCFrame(farAwayPos)
@@ -163,7 +159,7 @@ function MakeInvisible()
 
     IsInvis = true
     invisRunning = false
-    fixCamera()
+    fixCamera(InvisibleCharacter)
 end
 
 -- UI Toggle draggable
