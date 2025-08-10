@@ -108,6 +108,7 @@ function TurnVisible()
     invisRunning = false
     fixCamera(Character)
 
+    -- รีเฟรช Chat GUI
     pcall(function()
         StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, false)
         wait(0.1)
@@ -179,6 +180,13 @@ function MakeInvisible()
     IsInvis = true
     invisRunning = false
     fixCamera(InvisibleCharacter)
+
+    -- รีเฟรช Chat GUI
+    pcall(function()
+        StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, false)
+        wait(0.1)
+        StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, true)
+    end)
 end
 
 -- UI Toggle draggable
