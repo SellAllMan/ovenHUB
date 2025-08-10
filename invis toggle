@@ -4,13 +4,22 @@ local Workspace = game:GetService("Workspace")
 local Players = game:GetService("Players")
 
 local player = Players.LocalPlayer
-local mouse = player:GetMouse()
 
 local invisRunning = false
 local IsInvis = false
 local IsRunning = false
 local Character, InvisibleCharacter
 local invisFix, invisDied
+
+local function fixCamera()
+    -- ตั้งกล้องกลับไปติดตาม HumanoidRootPart ตัวละครปัจจุบัน
+    local cam = Workspace.CurrentCamera
+    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then
+        cam.CameraSubject = player.Character:FindFirstChildOfClass("Humanoid") or hrp
+        cam.CameraType = Enum.CameraType.Custom
+    end
+end
 
 local function Respawn()
     IsRunning = false
@@ -24,6 +33,7 @@ local function Respawn()
             IsInvis = false
             if InvisibleCharacter then InvisibleCharacter.Parent = nil end
             invisRunning = false
+            fixCamera()
         end)
     elseif IsInvis == false then
         pcall(function()
@@ -33,6 +43,7 @@ local function Respawn()
             local hum = Character:FindFirstChildWhichIsA("Humanoid")
             if hum then hum:Destroy() end
             TurnVisible()
+            fixCamera()
         end)
     end
 end
@@ -47,6 +58,7 @@ function TurnVisible()
         invisDied:Disconnect()
         invisDied = nil
     end
+
     local CF = Workspace.CurrentCamera.CFrame
     local CF_1 = player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character.HumanoidRootPart.CFrame or nil
     if CF_1 and Character and Character:FindFirstChild("HumanoidRootPart") then
@@ -63,6 +75,7 @@ function TurnVisible()
         Character.Animate.Disabled = false
     end
     invisRunning = false
+    fixCamera()
 end
 
 function MakeInvisible()
@@ -127,7 +140,8 @@ function MakeInvisible()
     InvisibleCharacter.HumanoidRootPart.CFrame = CF_1
     player.Character = InvisibleCharacter
 
-    -- execCmd('fixcam')  -- ตัดออกเพราะไม่มีระบบนี้ใน exploit
+    -- fix camera หลังสลับตัวละคร
+    fixCamera()
 
     player.Character.Animate.Disabled = true
     player.Character.Animate.Disabled = false
