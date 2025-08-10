@@ -11,7 +11,7 @@ local invisRunning = false
 local IsInvis = false
 local IsRunning = false
 local Character, InvisibleCharacter
-local invisFix, invisDied
+local invisFix, invisDied, invisSyncConnection
 
 local function fixCamera(targetCharacter)
     local cam = Workspace.CurrentCamera
@@ -72,6 +72,10 @@ function TurnVisible()
     if invisDied then
         invisDied:Disconnect()
         invisDied = nil
+    end
+    if invisSyncConnection then
+        invisSyncConnection:Disconnect()
+        invisSyncConnection = nil
     end
 
     if InvisibleCharacter and InvisibleCharacter:FindFirstChild("HumanoidRootPart") and Character and Character:FindFirstChild("HumanoidRootPart") then
@@ -155,6 +159,21 @@ function MakeInvisible()
     invisDied = InvisibleCharacter:FindFirstChildOfClass("Humanoid").Died:Connect(function()
         Respawn()
         invisDied:Disconnect()
+    end)
+
+    -- sync clone ทุก frame ให้ตำแหน่งตามตัวจริง
+    invisSyncConnection = RunService.RenderStepped:Connect(function()
+        if not InvisibleCharacter or not Character then return end
+        for _, v in pairs(InvisibleCharacter:GetDescendants()) do
+            if v:IsA("BasePart") then
+                local originalPart = Character:FindFirstChild(v.Name)
+                if originalPart and originalPart:IsA("BasePart") then
+                    v.CFrame = originalPart.CFrame
+                    v.Velocity = originalPart.Velocity
+                    v.RotVelocity = originalPart.RotVelocity
+                end
+            end
+        end
     end)
 
     IsInvis = true
