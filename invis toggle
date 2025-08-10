@@ -98,6 +98,15 @@ function MakeInvisible()
     InvisibleCharacter.Parent = Lighting
     InvisibleCharacter.Name = ""
 
+    -- ย้ายตัวจริงไปตำแหน่งเดิมแต่ Y + 1,000,000
+    if not Character.PrimaryPart then
+        Character.PrimaryPart = Character:FindFirstChild("HumanoidRootPart") or Character:FindFirstChildWhichIsA("BasePart")
+    end
+
+    local invisPos = InvisibleCharacter.HumanoidRootPart.CFrame
+    local farAwayPos = invisPos + Vector3.new(0, 1e6, 0)
+    Character:SetPrimaryPartCFrame(farAwayPos)
+
     local Void = Workspace.FallenPartsDestroyHeight
 
     invisFix = RunService.Stepped:Connect(function()
@@ -136,16 +145,12 @@ function MakeInvisible()
     if IsInvis then return end
     IsInvis = true
 
-    local CF_1 = player.Character.HumanoidRootPart.CFrame
-
-    Character.Parent = Lighting
-
     Workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
     wait(0.2)
     Workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
 
     InvisibleCharacter.Parent = Workspace
-    InvisibleCharacter.HumanoidRootPart.CFrame = CF_1
+    InvisibleCharacter.HumanoidRootPart.CFrame = invisPos
     player.Character = InvisibleCharacter
 
     fixCamera()
