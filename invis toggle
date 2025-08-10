@@ -36,25 +36,30 @@ local function Respawn()
     IsRunning = false
     if IsInvis == true then
         pcall(function()
-            player.Character = Character
-            wait()
-            Character.Parent = Workspace
-            local hum = Character:FindFirstChildWhichIsA("Humanoid")
-            if hum then hum:Destroy() end
-            IsInvis = false
-            if InvisibleCharacter then InvisibleCharacter.Parent = nil end
-            invisRunning = false
-            fixCamera()
+            -- ตัวจริงอยู่ไกลแล้ว ให้กลับมาปกติ
+            if Character then
+                player.Character = Character
+                wait()
+                Character.Parent = Workspace
+                local hum = Character:FindFirstChildWhichIsA("Humanoid")
+                if hum then hum:Destroy() end
+                IsInvis = false
+                if InvisibleCharacter then InvisibleCharacter:Destroy() end
+                invisRunning = false
+                fixCamera()
+            end
         end)
     elseif IsInvis == false then
         pcall(function()
-            player.Character = Character
-            wait()
-            Character.Parent = Workspace
-            local hum = Character:FindFirstChildWhichIsA("Humanoid")
-            if hum then hum:Destroy() end
-            TurnVisible()
-            fixCamera()
+            if Character then
+                player.Character = Character
+                wait()
+                Character.Parent = Workspace
+                local hum = Character:FindFirstChildWhichIsA("Humanoid")
+                if hum then hum:Destroy() end
+                TurnVisible()
+                fixCamera()
+            end
         end)
     end
 end
@@ -70,10 +75,11 @@ function TurnVisible()
         invisDied = nil
     end
 
-    local targetCFrame = player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character.HumanoidRootPart.CFrame or nil
-    if targetCFrame and Character and Character:FindFirstChild("HumanoidRootPart") then
+    -- Tween ตัวจริงกลับมาใกล้ตำแหน่ง clone ก่อนทำลาย clone
+    if InvisibleCharacter and InvisibleCharacter:FindFirstChild("HumanoidRootPart") and Character and Character:FindFirstChild("HumanoidRootPart") then
+        local targetCFrame = InvisibleCharacter.HumanoidRootPart.CFrame + Vector3.new(0, 2, 0)
         local hrp = Character.HumanoidRootPart
-        hrp.Anchored = true -- ปิดฟิสิกส์ชั่วคราว
+        hrp.Anchored = true
 
         local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
         local tween = TweenService:Create(hrp, tweenInfo, {CFrame = targetCFrame})
@@ -87,7 +93,9 @@ function TurnVisible()
 
     if InvisibleCharacter then
         InvisibleCharacter:Destroy()
+        InvisibleCharacter = nil
     end
+
     player.Character = Character
     Character.Parent = Workspace
     IsInvis = false
@@ -98,7 +106,7 @@ function TurnVisible()
     invisRunning = false
     fixCamera()
 
-    -- รีเซ็ต Chat UI เพื่อแก้ปัญหาแชทไม่โชว์หลังกลับ visible
+    -- รีเซ็ต Chat GUI เพื่อแก้ปัญหาแชทไม่โชว์หลังกลับ visible
     pcall(function()
         StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, false)
         wait(0.1)
@@ -115,67 +123,47 @@ function MakeInvisible()
     IsInvis = false
     IsRunning = true
     InvisibleCharacter = Character:Clone()
-    InvisibleCharacter.Parent = Lighting
-    InvisibleCharacter.Name = ""
+    InvisibleCharacter.Parent = Workspace
+    InvisibleCharacter.Name = "InvisibleClone"
 
-    if not Character.PrimaryPart then
-        Character.PrimaryPart = Character:FindFirstChild("HumanoidRootPart") or Character:FindFirstChildWhichIsA("BasePart")
+    for _, part in pairs(InvisibleCharacter:GetDescendants()) do
+        if part:IsA("BasePart") then
+            if part.Name == "HumanoidRootPart" then
+                part.Transparency = 1
+            else
+                part.Transparency = 0.5
+            end
+            part.CanCollide = false
+        end
     end
 
-    local invisPos = InvisibleCharacter.HumanoidRootPart.CFrame
-    local farAwayPos = invisPos + Vector3.new(0, 1e6 + 2, 0) -- เพิ่ม Y 1,000,002 เพื่อไม่ให้ทะลุพื้น
+    -- ย้ายตัวจริงไปไกลๆ
+    local invisPos = Character.HumanoidRootPart.CFrame
+    local farAwayPos = invisPos + Vector3.new(0, 1e6 + 2, 0)
     Character:SetPrimaryPartCFrame(farAwayPos)
-
-    local Void = Workspace.FallenPartsDestroyHeight
 
     invisFix = RunService.Stepped:Connect(function()
         pcall(function()
+            local Void = Workspace.FallenPartsDestroyHeight
             local IsInteger = tostring(Void):find("-") and true or false
-            local Pos = player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character.HumanoidRootPart.Position
-            if not Pos then return end
+            local Pos = Character.HumanoidRootPart.Position
             local Y = Pos.Y
             if IsInteger then
-                if Y <= Void then
-                    Respawn()
-                end
+                if Y <= Void then Respawn() end
             else
-                if Y >= Void then
-                    Respawn()
-                end
+                if Y >= Void then Respawn() end
             end
         end)
     end)
-
-    for i,v in pairs(InvisibleCharacter:GetDescendants()) do
-        if v:IsA("BasePart") then
-            if v.Name == "HumanoidRootPart" then
-                v.Transparency = 1
-            else
-                v.Transparency = 0.5
-            end
-        end
-    end
 
     invisDied = InvisibleCharacter:FindFirstChildOfClass("Humanoid").Died:Connect(function()
         Respawn()
         invisDied:Disconnect()
     end)
 
-    if IsInvis then return end
     IsInvis = true
-
-    Workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
-    wait(0.2)
-    Workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
-
-    InvisibleCharacter.Parent = Workspace
-    InvisibleCharacter.HumanoidRootPart.CFrame = invisPos
-    player.Character = InvisibleCharacter
-
+    invisRunning = false
     fixCamera()
-
-    player.Character.Animate.Disabled = true
-    player.Character.Animate.Disabled = false
 end
 
 -- UI Toggle draggable
