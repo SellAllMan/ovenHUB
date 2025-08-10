@@ -3,6 +3,7 @@ local Lighting = game:GetService("Lighting")
 local Workspace = game:GetService("Workspace")
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
+local StarterGui = game:GetService("StarterGui")
 
 local player = Players.LocalPlayer
 
@@ -96,6 +97,13 @@ function TurnVisible()
     end
     invisRunning = false
     fixCamera()
+
+    -- รีเซ็ต Chat UI เพื่อแก้ปัญหาแชทไม่โชว์หลังกลับ visible
+    pcall(function()
+        StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, false)
+        wait(0.1)
+        StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, true)
+    end)
 end
 
 function MakeInvisible()
