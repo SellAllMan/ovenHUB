@@ -31,13 +31,19 @@ local function fixCamera()
     cam.CameraType = Enum.CameraType.Custom
 end
 
-local function refreshChat()
-    -- รีเฟรช Chat GUI เพื่อแก้ปัญหาการไม่แสดง/ส่งข้อความ
-    pcall(function()
-        StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, false)
-        wait(0.1)
-        StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, true)
-    end)
+local function resetChat()
+    -- เคลียร์และรีโหลด Chat GUI เพื่อแก้ bug chat ไม่ทำงานใน exploit
+    local playerGui = player:FindFirstChild("PlayerGui")
+    if playerGui then
+        local chatGui = playerGui:FindFirstChild("Chat")
+        if chatGui then
+            chatGui:Destroy()
+        end
+    end
+    -- ปิดแล้วเปิด Chat coregui อีกครั้ง
+    StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, false)
+    wait(0.2)
+    StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, true)
 end
 
 local function Respawn()
@@ -53,7 +59,7 @@ local function Respawn()
             if InvisibleCharacter then InvisibleCharacter.Parent = nil end
             invisRunning = false
             fixCamera()
-            refreshChat()
+            resetChat()
         end)
     elseif IsInvis == false then
         pcall(function()
@@ -64,7 +70,7 @@ local function Respawn()
             if hum then hum:Destroy() end
             TurnVisible()
             fixCamera()
-            refreshChat()
+            resetChat()
         end)
     end
 end
@@ -96,7 +102,7 @@ function TurnVisible()
     end
     invisRunning = false
     fixCamera()
-    refreshChat()
+    resetChat()
 end
 
 function MakeInvisible()
@@ -111,7 +117,6 @@ function MakeInvisible()
     InvisibleCharacter.Parent = Lighting
     InvisibleCharacter.Name = ""
 
-    -- ย้ายตัวจริงไปตำแหน่งเดิมแต่ Y + 1,000,002 (เพิ่ม 2 เพื่อไม่ให้ทะลุพื้น)
     if not Character.PrimaryPart then
         Character.PrimaryPart = Character:FindFirstChild("HumanoidRootPart") or Character:FindFirstChildWhichIsA("BasePart")
     end
@@ -171,7 +176,7 @@ function MakeInvisible()
     player.Character.Animate.Disabled = true
     player.Character.Animate.Disabled = false
     invisRunning = false
-    refreshChat()
+    resetChat()
 end
 
 -- UI Toggle ปุ่มลากได้
