@@ -2,7 +2,6 @@ local RunService = game:GetService("RunService")
 local Lighting = game:GetService("Lighting")
 local Workspace = game:GetService("Workspace")
 local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
 
 local player = Players.LocalPlayer
 
@@ -69,21 +68,10 @@ function TurnVisible()
         invisDied = nil
     end
 
-    local targetCFrame = player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character.HumanoidRootPart.CFrame or nil
-    if targetCFrame and Character and Character:FindFirstChild("HumanoidRootPart") then
-        local hrp = Character.HumanoidRootPart
-        hrp.Anchored = true -- ปิดฟิสิกส์ชั่วคราว
-
-        local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-        local tween = TweenService:Create(hrp, tweenInfo, {CFrame = targetCFrame})
-        tween:Play()
-        tween.Completed:Wait()
-
-        hrp.Anchored = false
-        hrp.Velocity = Vector3.new(0,0,0)
-        hrp.RotVelocity = Vector3.new(0,0,0)
+    local CF_1 = player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character.HumanoidRootPart.CFrame or nil
+    if CF_1 and Character and Character:FindFirstChild("HumanoidRootPart") then
+        Character.HumanoidRootPart.CFrame = CF_1
     end
-
     if InvisibleCharacter then
         InvisibleCharacter:Destroy()
     end
@@ -110,12 +98,13 @@ function MakeInvisible()
     InvisibleCharacter.Parent = Lighting
     InvisibleCharacter.Name = ""
 
+    -- ย้ายตัวจริงไปตำแหน่งเดิมแต่ Y + 1,000,002 (เพิ่ม 2 เพื่อไม่ให้ทะลุพื้น)
     if not Character.PrimaryPart then
         Character.PrimaryPart = Character:FindFirstChild("HumanoidRootPart") or Character:FindFirstChildWhichIsA("BasePart")
     end
 
     local invisPos = InvisibleCharacter.HumanoidRootPart.CFrame
-    local farAwayPos = invisPos + Vector3.new(0, 1e6 + 2, 0) -- เพิ่ม Y 1,000,002 เพื่อไม่ให้ทะลุพื้น
+    local farAwayPos = invisPos + Vector3.new(0, 1e6 + 2, 0)
     Character:SetPrimaryPartCFrame(farAwayPos)
 
     local Void = Workspace.FallenPartsDestroyHeight
@@ -170,7 +159,7 @@ function MakeInvisible()
     player.Character.Animate.Disabled = false
 end
 
--- UI Toggle draggable
+-- UI Toggle ปุ่มลากได้
 
 local PlayerGui = player:WaitForChild("PlayerGui")
 
